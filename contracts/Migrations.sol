@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: UNLICENSED
-pragma solidity >=0.4.22 <0.7.0;
+pragma solidity <0.9.0;
 
 contract Migrations {
     address public owner;
@@ -11,7 +11,7 @@ contract Migrations {
         if (msg.sender == owner) _;
     }
 
-    constructor() public {
+    constructor() {
         owner = msg.sender;
     }
 

@@ -1,6 +1,10 @@
 {
   "license": "UNLICENSED",
   "dependencies": {
-    "truffle": "^5.5.11"
+    "@openzeppelin/contracts": "^4.6.0"
+  },
+  "devDependencies": {
+    "solc": "^0.8.13",
+    "truffle": "^5.5.12"
   }
 }
