@@ -5,6 +5,8 @@ contract Migrations {
     address public owner;
     uint256 public last_completed_migration;
 
+    uint256 public a;
+
     modifier restricted() {
         if (msg.sender == owner) _;
     }
