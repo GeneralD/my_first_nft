@@ -3,11 +3,12 @@ pragma solidity <0.9.0;
 
 import "@openzeppelin/contracts/access/Ownable.sol";
 import "@openzeppelin/contracts/token/ERC721/extensions/ERC721Enumerable.sol";
-import "@openzeppelin/contracts/utils/Context.sol";
 
 /// @author Yumenosuke Kokata
 /// @title A simple NFT
 contract NFT is Context, ERC721Enumerable, Ownable {
+    using Strings for uint256;
+
     bool public isPaused = false;
     uint256 public cost = 10 ether;
     string public baseURI;
@@ -27,6 +28,23 @@ contract NFT is Context, ERC721Enumerable, Ownable {
         return baseURI;
     }
 
+    function tokenURI(uint256 tokenId)
+        public
+        view
+        virtual
+        override
+        returns (string memory)
+    {
+        require(_exists(tokenId), "Token doesn't exist.");
+
+        return
+            bytes(baseURI).length > 0
+                ? string( // e.g. https://baseurl/123.json
+                    abi.encodePacked(baseURI, tokenId.toString(), baseExtension)
+                )
+                : "";
+    }
+
     // Public Members
 
     function mint(address to) public virtual {
@@ -38,7 +56,7 @@ contract NFT is Context, ERC721Enumerable, Ownable {
         payable
         virtual
         mintVerify(amount)
-        whitelistVerify(amount)
+        paymentVerify(amount)
     {
         // totalSupply works like auto incremented ID. It starts from 0.
         uint256 startTokenId = totalSupply();
@@ -49,11 +67,24 @@ contract NFT is Context, ERC721Enumerable, Ownable {
         }
     }
 
+    function walletOfOwner(address _owner)
+        public
+        view
+        returns (uint256[] memory)
+    {
+        uint256 balance = balanceOf(_owner);
+        uint256[] memory tokenIds = new uint256[](balance);
+        for (uint256 i; i < balance; i++) {
+            tokenIds[i] = tokenOfOwnerByIndex(_owner, i);
+        }
+        return tokenIds;
+    }
+
     function withdraw() public payable onlyOwner {
         require(payable(msg.sender).send(address(this).balance));
     }
 
-    // Setters
+    // Only owner can change the configurations
 
     function pause(bool _isPaused) public onlyOwner {
         isPaused = _isPaused;
@@ -93,9 +124,12 @@ contract NFT is Context, ERC721Enumerable, Ownable {
         _;
     }
 
-    modifier whitelistVerify(uint256 amount) {
+    modifier paymentVerify(uint256 amount) {
+        // My NFT?
         if (msg.sender == owner()) _;
+        // If the message sender is listed in whitelist, he can get NFT for free!
         if (whitelisted[msg.sender]) _;
+        // Check the cost is paid.
         require(msg.value >= cost * amount, "Not have enough asset.");
         _;
     }
