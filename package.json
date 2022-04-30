@@ -4,8 +4,10 @@
   "private": true,
   "dependencies": {
     "@openzeppelin/contracts": "^4.6.0",
+    "@reduxjs/toolkit": "^1.8.1",
     "react": "^18.1.0",
     "react-dom": "^18.1.0",
+    "react-redux": "^8.0.1",
     "web-vitals": "^2.1.4"
   },
   "devDependencies": {
