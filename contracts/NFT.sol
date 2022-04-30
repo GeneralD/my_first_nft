@@ -6,7 +6,7 @@ import "@openzeppelin/contracts/token/ERC721/extensions/ERC721Enumerable.sol";
 
 /// @author Yumenosuke Kokata
 /// @title A simple NFT
-contract NFT is Context, ERC721Enumerable, Ownable {
+contract NFT is ERC721Enumerable, Ownable {
     using Strings for uint256;
 
     bool public isPaused = false;
