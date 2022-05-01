@@ -3,6 +3,7 @@
   "name": "my_first_nft",
   "private": true,
   "dependencies": {
+    "@metamask/detect-provider": "^1.2.0",
     "@openzeppelin/contracts": "^4.6.0",
     "@reduxjs/toolkit": "^1.8.1",
     "bootstrap": "^5.1.3",
@@ -10,7 +11,8 @@
     "react-bootstrap": "^2.3.1",
     "react-dom": "^18.1.0",
     "react-redux": "^8.0.1",
-    "web-vitals": "^2.1.4"
+    "web-vitals": "^2.1.4",
+    "web3": "^1.7.3"
   },
   "devDependencies": {
     "@types/bootstrap": "^5.1.10",

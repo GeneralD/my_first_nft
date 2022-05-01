@@ -81,5 +81,3 @@ export const incrementIfOdd =
         dispatch(incrementByAmount(amount))
       }
     }
-
-export default counterSlice.reducer

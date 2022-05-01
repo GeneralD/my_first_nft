@@ -1,10 +1,12 @@
 import { Action, configureStore, ThunkAction } from '@reduxjs/toolkit'
 
-import counterReducer from '../features/counter/counterSlice'
+import { blockchainSlice } from '../features/blockchain/blockchainSlice'
+import { counterSlice } from '../features/counter/counterSlice'
 
 export const store = configureStore({
   reducer: {
-    counter: counterReducer,
+    counter: counterSlice.reducer,
+    blockchain: blockchainSlice.reducer,
   },
 })
 
