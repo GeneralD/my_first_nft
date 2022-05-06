@@ -2,14 +2,15 @@
 pragma solidity <0.9.0;
 
 import "@openzeppelin/contracts/access/Ownable.sol";
+import "@openzeppelin/contracts/token/ERC721/extensions/ERC721Burnable.sol";
 import "@openzeppelin/contracts/token/ERC721/extensions/ERC721Enumerable.sol";
+import "@openzeppelin/contracts/token/ERC721/extensions/ERC721Pausable.sol";
 
 /// @author Yumenosuke Kokata
 /// @title A simple NFT
-contract NFT is ERC721Enumerable, Ownable {
+contract NFT is Ownable, ERC721Enumerable, ERC721Burnable, ERC721Pausable {
     using Strings for uint256;
 
-    bool public isPaused = false;
     uint256 public cost = 10 ether;
     string public baseURI;
     string public baseExtension = ".json";
@@ -23,10 +24,6 @@ contract NFT is ERC721Enumerable, Ownable {
     {}
 
     // Override Members
-
-    function _baseURI() internal view virtual override returns (string memory) {
-        return baseURI;
-    }
 
     function tokenURI(uint256 tokenId)
         public
@@ -45,6 +42,32 @@ contract NFT is ERC721Enumerable, Ownable {
                 : "";
     }
 
+    function supportsInterface(bytes4 interfaceId)
+        public
+        view
+        virtual
+        override(ERC721Enumerable, ERC721)
+        returns (bool)
+    {
+        return super.supportsInterface(interfaceId);
+    }
+
+    function burn(uint256 tokenId) public virtual override whenPaused {
+        return super.burn(tokenId);
+    }
+
+    function _baseURI() internal view virtual override returns (string memory) {
+        return baseURI;
+    }
+
+    function _beforeTokenTransfer(
+        address from,
+        address to,
+        uint256 tokenId
+    ) internal virtual override(ERC721Pausable, ERC721Enumerable, ERC721) {
+        super._beforeTokenTransfer(from, to, tokenId);
+    }
+
     // Public Members
 
     function mint(address to) public virtual {
@@ -55,6 +78,7 @@ contract NFT is ERC721Enumerable, Ownable {
         public
         payable
         virtual
+        whenPaused
         mintVerify(amount)
         paymentVerify(amount)
     {
@@ -86,8 +110,9 @@ contract NFT is ERC721Enumerable, Ownable {
 
     // Only owner can change the configurations
 
-    function pause(bool _isPaused) public onlyOwner {
-        isPaused = _isPaused;
+    function pause(bool status) public onlyOwner {
+        if (status) _pause();
+        else _unpause();
     }
 
     function setCost(uint256 _cost) public onlyOwner {
@@ -117,7 +142,6 @@ contract NFT is ERC721Enumerable, Ownable {
     // Modifiers
 
     modifier mintVerify(uint256 amount) {
-        require(!isPaused, "Minting is held.");
         require(amount > 0, "amount must be larger than 0.");
         require(amount <= mintAmountLimit, "Too much amount.");
         require(totalSupply() + amount <= maxSupply, "Supply limit exceeded.");
@@ -127,7 +151,7 @@ contract NFT is ERC721Enumerable, Ownable {
     modifier paymentVerify(uint256 amount) {
         // My NFT?
         if (msg.sender == owner()) _;
-        // If the message sender is listed in whitelist, he can get NFT for free!
+        // If the message sender is listed in whitelist, he can mint NFT for free!
         if (whitelisted[msg.sender]) _;
         // Check the cost is paid.
         require(msg.value >= cost * amount, "Not have enough asset.");
