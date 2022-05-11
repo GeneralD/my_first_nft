@@ -19,9 +19,6 @@ contract NFT is
     bytes32 public constant MINTER_ADMIN_ROLE = keccak256("MINTER_ADMIN_ROLE");
     bytes32 public constant MINTER_ROLE = keccak256("MINTER_ROLE");
 
-    bytes32 public constant BURNER_ADMIN_ROLE = keccak256("BURNER_ADMIN_ROLE");
-    bytes32 public constant BURNER_ROLE = keccak256("BURNER_ROLE");
-
     bytes32 public constant CONFIG_ADMIN_ROLE = keccak256("CONFIG_ADMIN_ROLE");
     bytes32 public constant CONFIG_ROLE = keccak256(("CONFIG_ROLE"));
 
@@ -46,18 +43,15 @@ contract NFT is
     {
         // Granter roles
         _setRoleAdmin(MINTER_ROLE, MINTER_ADMIN_ROLE);
-        _setRoleAdmin(BURNER_ROLE, BURNER_ADMIN_ROLE);
         _setRoleAdmin(CONFIG_ROLE, CONFIG_ADMIN_ROLE);
         _setRoleAdmin(FINANCIAL_ROLE, FINANCIAL_ADMIN_ROLE);
         _setRoleAdmin(WHITELISTED_MEMBER, WHITELIST_ROLE);
         _setRoleAdmin(WHITELIST_ROLE, WHITELIST_ADMIN_ROLE);
 
         // Grant all to the sender (owner)
-        bytes32[10] memory roles = [
+        bytes32[8] memory roles = [
             MINTER_ADMIN_ROLE,
             MINTER_ROLE,
-            BURNER_ADMIN_ROLE,
-            BURNER_ROLE,
             CONFIG_ADMIN_ROLE,
             CONFIG_ROLE,
             FINANCIAL_ADMIN_ROLE,
@@ -99,13 +93,7 @@ contract NFT is
         return super.supportsInterface(interfaceId);
     }
 
-    function burn(uint256 tokenId)
-        public
-        virtual
-        override
-        whenNotPaused
-        onlyRole(BURNER_ROLE)
-    {
+    function burn(uint256 tokenId) public virtual override whenNotPaused {
         return super.burn(tokenId);
     }
 
