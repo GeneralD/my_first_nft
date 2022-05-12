@@ -11,17 +11,9 @@ contract InvitationMembershipNFT is ERC721, Ownable {
 
     constructor() ERC721("InvitationMembership", "VIP") {}
 
-    modifier onlyOwnerOrMember() {
-        require(
-            msg.sender == owner() || balanceOf(msg.sender) >= 1,
-            "not a member"
-        );
-        _;
-    }
-
-    function mintAndTransfer(address _to) public onlyOwnerOrMember {
+    function mintAndTransfer(address _to) public virtual onlyOwnerOrMember {
         _tokenCounter.increment();
-
+        // token id starts from 1
         uint256 _newItemId = _tokenCounter.current();
         _safeMint(msg.sender, _newItemId);
         safeTransferFrom(msg.sender, _to, _newItemId);
@@ -29,5 +21,13 @@ contract InvitationMembershipNFT is ERC721, Ownable {
 
     function getTotalSupply() external view returns (uint256) {
         return _tokenCounter.current();
+    }
+
+    modifier onlyOwnerOrMember() {
+        require(
+            msg.sender == owner() || balanceOf(msg.sender) >= 1,
+            "not a member"
+        );
+        _;
     }
 }
