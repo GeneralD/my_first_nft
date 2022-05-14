@@ -4,7 +4,7 @@ pragma solidity <0.9.0;
 import "@openzeppelin/contracts-upgradeable/token/ERC721/extensions/ERC721BurnableUpgradeable.sol";
 import "@openzeppelin/contracts-upgradeable/token/ERC721/extensions/ERC721EnumerableUpgradeable.sol";
 
-contract UpgradeableNFT is
+contract UpgradeableNFT_V2 is
     ERC721EnumerableUpgradeable,
     ERC721BurnableUpgradeable
 {
