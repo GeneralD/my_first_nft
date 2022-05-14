@@ -1,5 +1,5 @@
 const truffleAssert = require('truffle-assertions')
-const Contract = artifacts.require("LimitedInvitationMembershipNFT")
+const Contract = artifacts.require('LimitedInvitationMembershipNFT')
 
 contract('LimitedInvitationMembershipNFT', function (accounts) {
 
