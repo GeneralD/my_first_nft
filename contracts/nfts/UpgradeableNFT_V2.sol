@@ -1,15 +1,17 @@
 // SPDX-License-Identifier: MIT
 pragma solidity <0.9.0;
 
-import "@openzeppelin/contracts-upgradeable/access/OwnableUpgradeable.sol";
-import "@openzeppelin/contracts-upgradeable/token/ERC721/extensions/ERC721BurnableUpgradeable.sol";
+import "@openzeppelin/contracts-upgradeable/token/ERC721/ERC721Upgradeable.sol";
 import "@openzeppelin/contracts-upgradeable/token/ERC721/extensions/ERC721EnumerableUpgradeable.sol";
+import "@openzeppelin/contracts-upgradeable/access/OwnableUpgradeable.sol";
+import "@openzeppelin/contracts-upgradeable/proxy/utils/Initializable.sol";
 
+// V2 is not able to inherit class that was not interited in V1 and has storaged field.
 contract UpgradeableNFT_V2 is
+    Initializable,
     ERC721Upgradeable,
-    OwnableUpgradeable,
     ERC721EnumerableUpgradeable,
-    ERC721BurnableUpgradeable
+    OwnableUpgradeable
 {
     // These value will be inherited from V1
     uint256 public value;
@@ -17,9 +19,8 @@ contract UpgradeableNFT_V2 is
     // Upgradeable contract can't have constractor
     function initialize(uint256 _value1, uint256 _value2) public initializer {
         __ERC721_init("Upgradeable NFT", "UGNFT");
-        __Ownable_init();
         __ERC721Enumerable_init();
-        __ERC721Burnable_init();
+        __Ownable_init();
 
         _initializeFields(_value1 + _value2);
     }
@@ -48,7 +49,7 @@ contract UpgradeableNFT_V2 is
     )
         internal
         virtual
-        override(ERC721EnumerableUpgradeable, ERC721Upgradeable)
+        override(ERC721Upgradeable, ERC721EnumerableUpgradeable)
     {
         return super._beforeTokenTransfer(from, to, tokenId);
     }
@@ -57,7 +58,7 @@ contract UpgradeableNFT_V2 is
         public
         view
         virtual
-        override(ERC721EnumerableUpgradeable, ERC721Upgradeable)
+        override(ERC721Upgradeable, ERC721EnumerableUpgradeable)
         returns (bool)
     {
         return super.supportsInterface(interfaceId);
