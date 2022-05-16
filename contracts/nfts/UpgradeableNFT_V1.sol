@@ -1,17 +1,30 @@
 // SPDX-License-Identifier: MIT
 pragma solidity <0.9.0;
 
-import "@openzeppelin/contracts-upgradeable/token/ERC721/extensions/ERC721BurnableUpgradeable.sol";
+import "@openzeppelin/contracts-upgradeable/access/OwnableUpgradeable.sol";
 import "@openzeppelin/contracts-upgradeable/token/ERC721/extensions/ERC721EnumerableUpgradeable.sol";
 
 contract UpgradeableNFT_V1 is
     ERC721Upgradeable,
-    ERC721EnumerableUpgradeable,
-    ERC721BurnableUpgradeable
+    OwnableUpgradeable,
+    ERC721EnumerableUpgradeable
 {
+    uint256 public value;
+
     // Upgradeable contract can't have constractor
-    function initialize() public initializer {
+    function initialize(uint256 _value1, uint256 _value2) public initializer {
         __ERC721_init("Upgradeable NFT", "UGNFT");
+        __Ownable_init();
+        __ERC721Enumerable_init();
+
+        _initializeFields(_value1 + _value2);
+    }
+
+    /**
+     * @dev function has onlyInitializing modifier can be executed from function has initializer
+     */
+    function _initializeFields(uint256 _value) private onlyInitializing {
+        value = _value;
     }
 
     /// @custom:oz-upgrades-unsafe-allow constructor
@@ -37,5 +50,9 @@ contract UpgradeableNFT_V1 is
         returns (bool)
     {
         return super.supportsInterface(interfaceId);
+    }
+
+    function mint(address _to) public {
+        _safeMint(_to, totalSupply());
     }
 }

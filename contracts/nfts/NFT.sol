@@ -21,37 +21,21 @@ contract NFT is
     using Strings for uint256;
 
     string private constant BASE_URI = "http://sample.com/";
-    uint256 private constant COST = 1 ether;
-    uint256 private constant MINT_AMOUNT_LIMIT = 20;
-    uint256 private constant MAX_SUPPLY = 10_000;
 
     bytes32 public constant FINANCIAL_ROLE = keccak256("FINANCIAL_ROLE");
     bytes32 public constant FINANCIAL_ADMIN_ROLE =
         keccak256("FINANCIAL_ADMIN_ROLE");
-
-    bytes32 public constant WHITELIST_ADMIN_ROLE =
-        keccak256("WHITELIST_ADMIN_ROLE");
-    bytes32 public constant WHITELIST_ROLE = keccak256("WHITELIST_ROLE");
-    bytes32 public constant WHITELISTED_MEMBER =
-        keccak256("WHITELISTED_MEMBER");
 
     constructor(string memory _name, string memory _symbol)
         ERC721(_name, _symbol)
     {
         // Granter roles
         _setRoleAdmin(FINANCIAL_ROLE, FINANCIAL_ADMIN_ROLE);
-        _setRoleAdmin(WHITELISTED_MEMBER, WHITELIST_ROLE);
-        _setRoleAdmin(WHITELIST_ROLE, WHITELIST_ADMIN_ROLE);
 
         // Grant all to the sender (owner)
-        bytes32[4] memory roles = [
-            FINANCIAL_ADMIN_ROLE,
-            FINANCIAL_ROLE,
-            WHITELIST_ADMIN_ROLE,
-            WHITELIST_ROLE
-        ];
+        bytes32[2] memory roles = [FINANCIAL_ADMIN_ROLE, FINANCIAL_ROLE];
         for (uint256 i = 0; i < roles.length; i++) {
-            _setupRole(roles[i], msg.sender);
+            _grantRole(roles[i], msg.sender);
         }
     }
 
@@ -115,9 +99,8 @@ contract NFT is
         public
         payable
         virtual
+        onlyOwner
         whenNotPaused
-        mintAmountVerify(amount)
-        paymentVerify(amount)
     {
         // totalSupply works like auto incremented ID. It starts from 0.
         uint256 startTokenId = totalSupply();
@@ -161,22 +144,5 @@ contract NFT is
      */
     function unpause() public onlyOwner {
         _unpause();
-    }
-
-    modifier mintAmountVerify(uint256 amount) {
-        require(amount > 0, "amount must be larger than 0.");
-        require(amount <= MINT_AMOUNT_LIMIT, "Too much amount.");
-        require(totalSupply() + amount <= MAX_SUPPLY, "Supply limit exceeded.");
-        _;
-    }
-
-    modifier paymentVerify(uint256 amount) {
-        // My NFT?
-        if (msg.sender == owner()) _;
-        // If the message sender is listed in whitelist, he can mint NFT for free!
-        if (hasRole(WHITELISTED_MEMBER, msg.sender)) _;
-        // Check the cost is paid.
-        require(msg.value >= COST * amount, "Not have enough asset.");
-        _;
     }
 }

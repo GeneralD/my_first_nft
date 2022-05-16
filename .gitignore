@@ -316,5 +316,8 @@ test/.placeholder
 build
 deploy_mnemonic.key
 
+### OpenZeppelin
+.openzeppelin/
+
 ### Project
 src/artifacts/
