@@ -33,6 +33,11 @@ contract('LimitedInvitationMembershipNFT', function (accounts) {
         assert.equal(await upgraded.strValue(), '999')
     })
 
+    it("Upgrade a newed contract then failed", async function () {
+        const instance = await ContractV1.new()
+        await truffleAssert.fails(upgradeProxy(instance.address, ContractV2), `Contract at ${instance.address} doesn't look like an ERC 1967 proxy with a logic contract address`)
+    })
+
     it("Deploy a beacon proxy and check a value of an instance", async function () {
         const beacon = await deployBeacon(ContractV1)
         const instance = await deployBeaconProxy(beacon.address, ContractV1, [777])
@@ -61,12 +66,12 @@ contract('LimitedInvitationMembershipNFT', function (accounts) {
         assert.equal(beaconAddress, beacon.address)
     })
 
-    it("Get beacon address from a newed instance failed", async function () {
+    it("Get beacon address from a newed instance then failed", async function () {
         const instance = await ContractV1.new()
         await truffleAssert.fails(erc1967.getBeaconAddress(instance.address), `Contract at ${instance.address} doesn't look like an ERC 1967 beacon proxy`)
     })
 
-    it("Get beacon address from a proxied instance failed", async function () {
+    it("Get beacon address from a proxied instance then failed", async function () {
         const instance = await deployProxy(ContractV1, [555])
         await truffleAssert.fails(erc1967.getBeaconAddress(instance.address), `Contract at ${instance.address} doesn't look like an ERC 1967 beacon proxy`)
     })
