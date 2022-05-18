@@ -317,7 +317,7 @@ build
 deploy_mnemonic.key
 
 ### OpenZeppelin
-.openzeppelin/
+.openzeppelin/unknown-*.json
 
 ### Project
 src/artifacts/

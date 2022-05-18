@@ -15,18 +15,26 @@ contract UpgradeableNFT_V1 is
     uint256 public value;
 
     // Upgradeable contract can't have constractor
-    function initialize(uint256 _value1, uint256 _value2) public initializer {
-        __ERC721_init("Upgradeable NFT", "UGNFT");
+    function initialize(uint256 _value) public initializer {
+        __UpgradeableNFT_V1_init("Upgradeable NFT", "UGNFT", _value);
+    }
+
+    function __UpgradeableNFT_V1_init(
+        string memory _name,
+        string memory _symbol,
+        uint256 _value
+    ) internal onlyInitializing {
+        __ERC721_init(_name, _symbol);
         __ERC721Enumerable_init();
         __Ownable_init();
 
-        _initializeFields(_value1 + _value2);
+        __UpgradeableNFT_V1_init_unchained(_value);
     }
 
-    /**
-     * @dev function has onlyInitializing modifier can be executed from function has initializer
-     */
-    function _initializeFields(uint256 _value) private onlyInitializing {
+    function __UpgradeableNFT_V1_init_unchained(uint256 _value)
+        internal
+        onlyInitializing
+    {
         value = _value;
     }
 
