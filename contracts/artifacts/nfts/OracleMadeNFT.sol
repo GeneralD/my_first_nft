@@ -5,7 +5,7 @@ import "@openzeppelin/contracts/token/ERC721/ERC721.sol";
 import "@openzeppelin/contracts/token/ERC721/extensions/ERC721URIStorage.sol";
 import "@openzeppelin/contracts/access/Ownable.sol";
 import "@openzeppelin/contracts/utils/Counters.sol";
-import "../utils/provableAPI_0.8.sol";
+import "../provable/provableAPI_0.8.sol";
 
 contract OracleMadeNFT is ERC721, ERC721URIStorage, Ownable, usingProvable {
     using Counters for Counters.Counter;
@@ -62,12 +62,18 @@ contract OracleMadeNFT is ERC721, ERC721URIStorage, Ownable, usingProvable {
     }
 
     modifier checkBalance() {
-        require(address(this).balance >= provable_getPrice("URL"));
+        require(
+            address(this).balance >= provable_getPrice("URL"),
+            "Add some ETH to cover for the query fee!"
+        );
         _;
     }
 
     modifier checkCallbackAddress() {
-        require(msg.sender == provable_cbAddress());
+        require(
+            msg.sender == provable_cbAddress(),
+            "Callback doesn't want to be invoked by stranger address!"
+        );
         _;
     }
 }
