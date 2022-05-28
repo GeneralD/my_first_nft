@@ -21,7 +21,7 @@ const svgDataUri = async string => {
 
 contract('OracleMadeNFT', accounts => {
 
-    var listening
+    var listener
 
     before(() => {
         // server as a oracle
@@ -37,13 +37,14 @@ contract('OracleMadeNFT', accounts => {
             response.end()
         })
         // start the server
-        listening = http.createServer(oracle).listen(8888, () => {
+        listener = http.createServer(oracle).listen(8888, () => {
             console.log('Oracle server is launched.')
         })
     })
 
     after(() => {
-        listening.close(error => { console.log(error.message) })
+        // if (listener.listening)
+        //     listener.close(error => { console.log(error.message) })
     })
 
     it("Mint a NFT then receive a callback", async function () {
