@@ -28,7 +28,7 @@ contract OracleMadeNFT is ERC721, ERC721URIStorage, Ownable, usingProvable {
                     tokenId,
                     ").uri"
                 )
-test/oracleMadeNFT.js            )
+            )
         );
         tokenIdByQueryId[id] = tokenId;
     }
