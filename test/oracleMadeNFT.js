@@ -1,4 +1,5 @@
 const express = require('express')
+const http = require('http')
 const truffleAssert = require('truffle-assertions')
 const Contract = artifacts.require('OracleMadeNFT')
 
@@ -28,6 +29,7 @@ contract('OracleMadeNFT', accounts => {
         // declare APIs
         oracle.get('/mint/:tokenId', async (request, response) => {
             const tokenId = request.params.tokenId
+            console.log(`server is requested with tokenId: ${tokenId}`)
             response.json({
                 uri: svgDataUri(tokenId),
                 tokenId: tokenId,
@@ -35,12 +37,19 @@ contract('OracleMadeNFT', accounts => {
             response.end()
         })
         // start the server
-        listening = oracle.listen(8888, () => {
+        listening = http.createServer(oracle).listen(8888, () => {
             console.log('Oracle server is launched.')
         })
     })
 
     after(() => {
         listening.close(error => { console.log(error.message) })
+    })
+
+    it("Mint a NFT then receive a callback", async function () {
+        const instance = await Contract.new()
+        await instance.safeMint(accounts[1])
+        // check __callback called
+
     })
 })
