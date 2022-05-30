@@ -17,5 +17,11 @@ module.exports = {
       network_id: "*",
       gas: 5_000_000
     }
+  },
+  mocha: {
+    reporter: 'eth-gas-reporter',
+    reporterOptions: {
+      currency: 'JPY'
+    }
   }
 }
